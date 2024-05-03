@@ -12,7 +12,7 @@ public class Exploder : MonoBehaviour
     private static int _minPartAmount = 2;
     private static int _maxPartAmount = 6;
 
-    public void Explode(Block block)
+    public void Explode(Exploder exploder)
     {
             if (isChanceEnough())
             {
@@ -21,10 +21,16 @@ public class Exploder : MonoBehaviour
 
                 for (int i = 0; i < _partAmount + 1; i++)
                 {
-                    Block copy = Instantiate(block, transform.position, Random.rotation);
-                    Exploder exploder = copy.GetComponent<Exploder>();
-                    
-                    blocks.Add(copy.GetComponent<Rigidbody>());
+                    Exploder copy = Instantiate(exploder, transform.position, Random.rotation);
+
+                    if (copy.TryGetComponent<Rigidbody>(out Rigidbody rigidbody))
+                    {
+                        blocks.Add(rigidbody);
+                    }
+                    else
+                    {
+                        return;
+                    }
 
                     int newReproduceChance = DecreaceChance(_reproduceChance);
 
@@ -35,7 +41,7 @@ public class Exploder : MonoBehaviour
                     item.AddExplosionForce(_explosionForce, transform.position, _explosionRadius);
             }
             
-            Destroy(block.gameObject);
+            Destroy(exploder.gameObject);
     }
 
     public void SetChance(int newChance)

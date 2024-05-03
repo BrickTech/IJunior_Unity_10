@@ -3,32 +3,27 @@ using UnityEngine;
 public class Raycaster : MonoBehaviour
 {
     [SerializeField] private Camera _camera;
-    [SerializeField] private Ray _ray;
-
-    private Transform _objectHit;
-    private Exploder _exploder;
+    
+    private int _leftMouseClick = 0;
 
     private void Update()
     {
-        GetObject();
+        ShootRay();
     }
 
-    private void GetObject()
+    private void ShootRay()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(_leftMouseClick))
         {
-            _ray = _camera.ScreenPointToRay(Input.mousePosition);
+            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(_ray, out hit, Mathf.Infinity))
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
-                _objectHit = hit.transform;
+                Transform _objectHit = hit.transform;
 
-                if (_objectHit.TryGetComponent<Block>(out Block block))
-                {
-                    _exploder = _objectHit.GetComponent<Exploder>();
-                    _exploder.Explode(block);
-                }
+                if (_objectHit.TryGetComponent<Exploder>(out Exploder exploder))
+                    exploder.Explode(exploder);
             }
         }
     }
