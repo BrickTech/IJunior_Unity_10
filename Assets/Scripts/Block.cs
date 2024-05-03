@@ -3,11 +3,10 @@ using UnityEngine;
 public class Block : MonoBehaviour 
 {
     [SerializeField] private Raycaster _raycaster;
-    [SerializeField] private float _scaleDecrease;
+    [SerializeField] private float _scaleReducer;
 
     private Renderer _renderer;
     private ColorChanger _colorChanger;
-    private float _scaleReducer = 2;
     
     private void Awake()
     {
