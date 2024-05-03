@@ -2,27 +2,48 @@ using UnityEngine;
 
 public class Block : MonoBehaviour 
 {
-    [SerializeField] private Raycaster _raycaster;
-    [SerializeField] private float _scaleReducer;
+    [SerializeField] private int _scaleReduceValue = 2;
+    [SerializeField] private Spawner _spawner;
 
-    private Renderer _renderer;
-    private ColorChanger _colorChanger;
+    private Material _material;
+    private int _decreaceChance = 2;
+    private int _reproduceChance = 100;
+
+    public int Chance => _reproduceChance;
     
+
     private void Awake()
     {
-        _colorChanger = new ColorChanger();
+        _material = GetComponent<Renderer>().material;
 
-        if(TryGetComponent(out Renderer renderer))
-        {
-            _renderer = renderer;
-
-            _colorChanger.ChangeColor(_renderer.material);
-            ReduceScale(_scaleReducer);
-        }
+        ChangeColor(_material);
     }
 
-    public void ReduceScale(float decrease)
+    public void OnClick()
     {
-        transform.localScale /= decrease;
+        if (isChanceEnough())
+        {
+            _spawner.Spawn(this);
+        }
+
+        Destroy(transform.gameObject);
     }
+
+    public void SetChance(int chance) =>
+        _reproduceChance = chance / _decreaceChance;
+
+    public void ReduceScale() =>
+        transform.localScale /= _scaleReduceValue;
+
+    private bool isChanceEnough()
+    {
+        int minChance = 0;
+        int maxChance = 100;
+        int randomChance = Random.Range(minChance, maxChance + 1);
+
+        return _reproduceChance >= randomChance;
+    }
+
+    private void ChangeColor(Material material) =>
+        material.color = new Color(Random.Range(0, 1f), Random.Range(0, 1f), Random.Range(0, 1f));
 }
